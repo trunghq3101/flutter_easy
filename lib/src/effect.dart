@@ -11,12 +11,18 @@ class Effect<I, R> extends ChangeNotifier {
     this.onSuccess,
     this.onError,
     this.throwError = false,
-  }) : _runner = runner;
+    this.dependsOn = const [],
+  }) : _runner = runner {
+    for (var dep in dependsOn) {
+      dep.addListener(() {});
+    }
+  }
 
   late final FutureOr<R> Function(I? variables) _runner;
   final Function(R? data)? onSuccess;
   final Function(Object error)? onError;
   final bool throwError;
+  final List<Effect> dependsOn;
 
   var status = EffectStatus.idle;
   R? data;

@@ -6,3 +6,4 @@ export 'src/widgets/multi_child_widget.dart';
 export 'src/widgets/effect_builder.dart';
 export 'src/effect.dart';
 export 'src/cache_storage.dart';
+export 'src/hooks/use_task.dart';
