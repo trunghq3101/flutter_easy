@@ -18,6 +18,7 @@ class TaskResult<TData> {
   final Object? error;
 
   bool get hasData => data != null;
+  bool get isIdle => state == TaskState.idle;
   bool get isLoading => state == TaskState.loading;
   bool get isSuccess => state == TaskState.success;
   bool get isError => state == TaskState.error;
@@ -45,6 +46,7 @@ Task<TData> useTask<TData>(FutureOr<TData> Function() fn,
   final result = useState(TaskResult<TData>());
 
   void run() async {
+    result.value = TaskResult<TData>();
     result.value = result.value.copyWith(state: TaskState.loading);
     try {
       final data = await fn();
