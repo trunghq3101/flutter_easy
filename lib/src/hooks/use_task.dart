@@ -4,7 +4,11 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class Task<TData> {
-  final void Function() run;
+  final void Function({
+    Function()? onLoading,
+    Function(TData data)? onSuccess,
+    Function(Object? e)? onError,
+  }) run;
   final ValueNotifier<TaskResult<TData>> result;
 
   Task(this.run, this.result);
@@ -45,15 +49,22 @@ Task<TData> useTask<TData>(FutureOr<TData> Function() fn,
     {bool debug = false}) {
   final result = useState(TaskResult<TData>());
 
-  void run() async {
+  void run({
+    Function()? onLoading,
+    Function(TData data)? onSuccess,
+    Function(Object? e)? onError,
+  }) async {
+    onLoading?.call();
     result.value = TaskResult<TData>();
     result.value = result.value.copyWith(state: TaskState.loading);
     try {
       final data = await fn();
       result.value =
           result.value.copyWith(state: TaskState.success).withData(data);
+      onSuccess?.call(data);
     } catch (e) {
       result.value = result.value.copyWith(state: TaskState.error).withError(e);
+      onError?.call(e);
       if (debug) rethrow;
     }
   }
